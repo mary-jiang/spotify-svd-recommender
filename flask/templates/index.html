@@ -70,8 +70,7 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script>
-        var validSelection = false;
-        var selectedValue = '';
+        var currentValue = '';
 
         $(document).ready(function() {
             $("#autocomplete").autocomplete({
@@ -85,17 +84,16 @@
                 minLength: 2,
                 select: function(event, ui) {
                     console.log(ui.item.value);
-                    selectedValue = ui.item.value;
+                    currentValue = ui.item.value;
                     $('#autocomplete').val(ui.item.value);
                 }
             }).on("input", function() {
-                var currentValue = $(this).val();
-                if (currentValue !== selectedValue) {
-                }
+                currentValue = $(this).val();
+                console.log(currentValue);
             });;
 
             $("#searchbutton").click(function() {
-                $.getJSON("/recommend", {selected_song: selectedValue}, function(data) {
+                $.getJSON("/recommend", {selected_song: currentValue}, function(data) {
                     var tableBody = $('#resultsTable tbody');
                     tableBody.empty();
                     data.forEach(function(item) {

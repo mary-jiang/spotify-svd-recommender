@@ -39,7 +39,7 @@ def search():
 def recommend():
     selected_song = request.args.get('selected_song')
     if selected_song:
-        track_song, sep, track_artist = selected_song.rpartition(' - ')
+        track_song, sep, track_artist = selected_song.rpartition('-')
         track_song = track_song.strip()
         track_artist = track_artist.strip()
         print('selected song: {} selected artist: {}'.format(track_song, track_artist))
