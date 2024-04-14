@@ -51,9 +51,9 @@ def recommend():
             ]
             return jsonify(recommendations)
         else:
-            return jsonify({'error': 'Song or artist not found or invalid format'}), 400
+            return jsonify([{'song_name': 'Error song not found'}])
     else:
-        return jsonify({'error': 'No song provided'}), 400
+        return jsonify([{'song_name': 'No song provided'}])
 
 if __name__ == '__main__':
     app.run(debug=True)
