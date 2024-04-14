@@ -36,10 +36,19 @@
             margin-top: 10px;
             padding: 5px;
         }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
     </style>
 </head>
 <body>
-    <h1>Spotify Recommender with SVD</h1>
+    <h1 class="content">Spotify Recommender with SVD</h1>
     <div class="content">
         <div class="searchbar">
             <input type="text" style="width: 300px" id="autocomplete" placeholder="Search for tracks or artists...">
@@ -47,12 +56,22 @@
         <div>
             <input type="button" id="searchbutton" value="Get recommendations">
         </div>
+        <table id="resultsTable" style="margin-top: 20px; display: none;">
+            <thead>
+                <tr>
+                    <th>Recommendation</th>
+                    <th>Similarity Score</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script>
         var validSelection = false;
+        var selectedValue = '';
 
         $(document).ready(function() {
             $("#autocomplete").autocomplete({
@@ -66,8 +85,24 @@
                 minLength: 2,
                 select: function(event, ui) {
                     console.log(ui.item.value);
-                    validSelection = true;
+                    selectedValue = ui.item.value;
+                    $('#autocomplete').val(ui.item.value);
                 }
+            }).on("input", function() {
+                var currentValue = $(this).val();
+                if (currentValue !== selectedValue) {
+                }
+            });;
+
+            $("#searchbutton").click(function() {
+                $.getJSON("/recommend", {selected_song: selectedValue}, function(data) {
+                    var tableBody = $('#resultsTable tbody');
+                    tableBody.empty();
+                    data.forEach(function(item) {
+                        tableBody.append('<tr><td>' + item.song_name + '</td><td>' + item.score + '</td></tr>');
+                    });
+                    $('#resultsTable').show();
+                });
             });
         });
     </script>
