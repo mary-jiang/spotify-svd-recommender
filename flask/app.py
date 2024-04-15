@@ -1,5 +1,6 @@
 from flask import Flask, render_template, jsonify, request
 import sqlite3
+import rec_engine
 
 app = Flask(__name__)
 
@@ -42,14 +43,13 @@ def recommend():
         track_song, sep, track_artist = selected_song.rpartition('-')
         track_song = track_song.strip()
         track_artist = track_artist.strip()
+        recommendations = rec_engine.generate_recs(track_song, 3)
         print('selected song: {} selected artist: {}'.format(track_song, track_artist))
-        if sep and song_exists(track_song, track_artist):
-            recommendations = [
-                {"song_name": "Song One", "score": 88},
-                {"song_name": "Song Two", "score": 92},
-                {"song_name": "Song Three", "score": 85}
-            ]
-            return jsonify(recommendations)
+        if sep and song_exists(track_song, track_artist) and recommendations is not None:
+            recs_json = []
+            for rec in recommendations:
+                recs_json.append({"song_name": rec[0], "score": rec[1]})
+            return jsonify(recs_json)
         else:
             return jsonify([{'song_name': 'Error song not found'}])
     else:
