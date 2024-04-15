@@ -11,6 +11,15 @@ def get_data(search):
     conn.close()
     return [' - '.join(row) for row in data]
 
+def song_exists(song, artist):
+    conn = sqlite3.connect('spotify.db')
+    cur = conn.cursor()
+    cur.execute("SELECT COUNT(*) FROM tracks WHERE track_name = ? AND artist_name = ?", (song, artist))
+    count = cur.fetchone()[0]
+    conn.close()
+    return count > 0
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -28,10 +37,23 @@ def search():
 # TODO: link with SVD method to return recommendation results
 @app.route('/recommend')
 def recommend():
-    query = request.args.get('song_name')
-    #SVD method goes here
-    pass
-    # return array of recommendations
+    selected_song = request.args.get('selected_song')
+    if selected_song:
+        track_song, sep, track_artist = selected_song.rpartition('-')
+        track_song = track_song.strip()
+        track_artist = track_artist.strip()
+        print('selected song: {} selected artist: {}'.format(track_song, track_artist))
+        if sep and song_exists(track_song, track_artist):
+            recommendations = [
+                {"song_name": "Song One", "score": 88},
+                {"song_name": "Song Two", "score": 92},
+                {"song_name": "Song Three", "score": 85}
+            ]
+            return jsonify(recommendations)
+        else:
+            return jsonify([{'song_name': 'Error song not found'}])
+    else:
+        return jsonify([{'song_name': 'No song provided'}])
 
 if __name__ == '__main__':
     app.run(debug=True)
