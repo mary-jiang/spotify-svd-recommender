@@ -88,7 +88,3 @@ def get_k_most_similar(song_name, k):
 print(track_names_array[5])
 print(get_k_most_similar(track_names_array[5], 3))
     
-# print("U:\n", U)
-# print(np.dot(U[0], U[2]))
-# print("S:\n", S)
-# print("V:\n", V)
